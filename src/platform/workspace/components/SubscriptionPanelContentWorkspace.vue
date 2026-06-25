@@ -97,7 +97,7 @@
                   </span>
                 </div>
                 <div
-                  v-if="isActiveSubscription"
+                  v-if="canAccessSubscriptionFeatures"
                   :class="
                     cn(
                       'text-sm',
@@ -125,7 +125,10 @@
               </div>
 
               <div
-                v-if="isActiveSubscription && permissions.canManageSubscription"
+                v-if="
+                  canAccessSubscriptionFeatures &&
+                  permissions.canManageSubscription
+                "
                 class="flex flex-wrap gap-2 md:ml-auto"
               >
                 <!-- Cancelled state: reactivation is original-owner-only. -->
@@ -183,7 +186,7 @@
             <CreditsTile :zero-state="showZeroState" />
           </div>
 
-          <div v-if="isActiveSubscription" class="flex flex-col gap-2">
+          <div v-if="canAccessSubscriptionFeatures" class="flex flex-col gap-2">
             <div class="text-sm text-text-primary">
               {{ $t('subscription.yourPlanIncludes') }}
             </div>
@@ -220,7 +223,7 @@
       <!-- Members invoice card -->
       <div
         v-if="
-          isActiveSubscription &&
+          canAccessSubscriptionFeatures &&
           !isInPersonalWorkspace &&
           permissions.canManageSubscription
         "
@@ -301,7 +304,7 @@ const billingOperationStore = useBillingOperationStore()
 const isSettingUp = computed(() => billingOperationStore.isSettingUp)
 
 const {
-  isActiveSubscription,
+  canAccessSubscriptionFeatures,
   isFreeTier: isFreeTierPlan,
   subscription,
   showSubscriptionDialog,
@@ -349,7 +352,7 @@ const isCancelled = computed(
 const showSubscribePrompt = computed(() => {
   if (!permissions.value.canManageSubscription) return false
   if (isCancelled.value) return false
-  if (isInPersonalWorkspace.value) return !isActiveSubscription.value
+  if (isInPersonalWorkspace.value) return !canAccessSubscriptionFeatures.value
   return !isWorkspaceSubscribed.value
 })
 
@@ -357,7 +360,7 @@ const showSubscribePrompt = computed(() => {
 const isMemberView = computed(
   () =>
     !permissions.value.canManageSubscription &&
-    !isActiveSubscription.value &&
+    !canAccessSubscriptionFeatures.value &&
     !isWorkspaceSubscribed.value
 )
 
